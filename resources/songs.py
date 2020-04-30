@@ -76,3 +76,32 @@ def delete_song(id):
 		message=f"Successfully deleted {num_of_rows_deleted} song with id of {id}",
 		status=200
 	), 200
+
+
+
+### SONG UPDATE ROUTE -- PUT ###
+@songs.route('/<id>', methods=['PUT'])
+def update_song(id):
+
+	payload = request.get_json()
+
+	update_query = models.Song.update(
+		song_title=payload['song_title'],
+		album_title=payload['album_title'],
+		artist=payload['artist'],
+		genre=payload['genre'],
+		posted_by=payload['posted_by']
+	).where(models.Song.id == id)
+
+	num_of_rows_updated = update_query.execute()
+
+	updated_song = models.Song.get_by_id(id)
+	updated_song_dict = model_to_dict(updated_song)
+
+
+	# RESPONSE
+	return jsonify(
+		data=updated_song_dict,
+		message=f"Successfully updated a song with the id of {id}",
+		status=200
+	), 200
