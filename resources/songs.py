@@ -2,6 +2,7 @@ import models
 
 from flask import Blueprint, request, jsonify
 from playhouse.shortcuts import model_to_dict
+from flask_login import current_user
 
 songs = Blueprint('songs', 'songs')
 
@@ -13,6 +14,10 @@ def songs_index():
 	print(result)
 
 	song_dicts = [model_to_dict(song) for song in result]
+
+	for song_dict in song_dicts:
+		song_dict['posted_by'].pop('password')
+
 	print('- ' * 20)
 	print('here is song_dicts')
 	print(song_dicts)
@@ -38,7 +43,7 @@ def create_song():
 		album_title=payload['album_title'],
 		artist=payload['artist'],
 		genre=payload['genre'],
-		posted_by=payload['posted_by']
+		posted_by=current_user.id
 	)
 	print('- ' * 20)
 	print('here is add_song')
@@ -51,6 +56,7 @@ def create_song():
 	# print(dir(add_song))
 
 	song_dict = model_to_dict(add_song)
+	song_dict['posted_by'].pop('password')
 
 	# RESPONSE
 	return jsonify(
