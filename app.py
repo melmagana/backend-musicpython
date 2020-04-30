@@ -1,6 +1,7 @@
 from flask import Flask
 
 from resources.users import users
+from resources.songs import songs
 
 import models
 
@@ -43,10 +44,12 @@ def load_user(user_id):
 
 ### CORS -- CROSS ORIGIN RESOURCE SHARING ###
 CORS(users, origins=['http://localhost:3000'], supports_credentials=True)
+CORS(songs, origins=['http://localhost:3000'], supports_credentials=True)
 
 
 ### "CONTROLLERS" ###
 app.register_blueprint(users, url_prefix='/api/v1/users')
+app.register_blueprint(songs, url_prefix='/api/v1/songs')
 
 
 
