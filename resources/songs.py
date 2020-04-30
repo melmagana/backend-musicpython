@@ -58,3 +58,21 @@ def create_song():
 		message=f"Successfully added {song_dict['song_title']} by {song_dict['artist']}",
 		status=201
 	), 201
+
+
+
+### DESTROY SONG ROUTE -- DELETE ###
+@songs.route('/<id>', methods=['DELETE'])
+def delete_song(id):
+
+	delete_query = models.Song.delete().where(models.Song.id == id)
+	num_of_rows_deleted = delete_query.execute()
+	print(num_of_rows_deleted)
+
+
+	# RESPONSE
+	return jsonify(
+		data={},
+		message=f"Successfully deleted {num_of_rows_deleted} song with id of {id}",
+		status=200
+	), 200
