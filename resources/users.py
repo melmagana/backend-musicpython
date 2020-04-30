@@ -3,7 +3,7 @@ import models
 from flask import Blueprint, request, jsonify
 from flask_bcrypt import generate_password_hash, check_password_hash
 from playhouse.shortcuts import model_to_dict
-from flask_login import login_user
+from flask_login import login_user, current_user, logout_user
 
 users = Blueprint('users', 'users')
 
@@ -130,3 +130,49 @@ def login():
 			message="Email or password is invalid",
 			status=401
 		), 401
+
+
+
+### TEMPORARY ROUTE ###
+@users.route('/logged_in_user', methods=['GET'])
+def currently_logged():
+
+	print(current_user)
+	print(type(current_user))
+
+
+	# current_user.is_authenticated allows you to see whether a user is logged in
+	if not current_user.is_authenticated:
+
+		# RESPONSE
+		return jsonify(
+			data={},
+			message="No user is currently logged in",
+			status=401
+		), 401
+
+	# ACCESS TO CURRENTLY LOGGED USER
+	else:
+		user_dict = model_to_dict(current_user)
+		user_dict.pop('password')
+
+		# RESPONSE
+		return jsonify(
+			data=user_dict,
+			message=f"Currently logged in as user {user_dict['username']} with the email {user_dict['email']}",
+			status=200
+		), 200
+
+
+### LOGOUT ROUTE -- GET ###
+@users.route('/logout', methods=['GET'])
+def logout():
+
+	logout_user()
+
+	# RESPONSE
+	return jsonify(
+		data={},
+		message="Successfully logged out!",
+		status=200
+	), 200
