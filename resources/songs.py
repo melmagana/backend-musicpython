@@ -5,10 +5,28 @@ from playhouse.shortcuts import model_to_dict
 
 songs = Blueprint('songs', 'songs')
 
+### SONG INDEX ROUTE -- GET ###
 @songs.route('/', methods=['GET'])
 def songs_index():
-	return 'songs resource working'
+	
+	result = models.Song.select()
+	print(result)
 
+	song_dicts = [model_to_dict(song) for song in result]
+	print('- ' * 20)
+	print('here is song_dicts')
+	print(song_dicts)
+
+	# RESPONSE
+	return jsonify({
+		'data': song_dicts,
+		'message': f"Successfully found {len(song_dicts)} songs",
+		'status': 200
+	}), 200
+
+
+
+### CREATE SONG ROUTE -- POST ###
 @songs.route('/', methods=['POST'])
 def create_song():
 
@@ -20,7 +38,7 @@ def create_song():
 		album_title=payload['album_title'],
 		artist=payload['artist'],
 		genre=payload['genre'],
-		posted_by=['posted_by']
+		posted_by=payload['posted_by']
 	)
 	print('- ' * 20)
 	print('here is add_song')
