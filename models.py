@@ -1,7 +1,7 @@
 from peewee import *
-from flask_login import UserMixin
-
 import datetime
+
+from flask_login import UserMixin
 
 
 DATABASE = SqliteDatabase('songs.sqlite')
