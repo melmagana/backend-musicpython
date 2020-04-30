@@ -21,7 +21,7 @@ class Song(Model):
 	album_title=CharField()
 	artist=CharField()
 	genre=CharField()
-	posted_by=CharField()
+	posted_by=ForeignKeyField(User, backref='songs')
 	date_posted=DateField(default=datetime.date.today)
 
 	class Meta:

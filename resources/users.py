@@ -8,8 +8,21 @@ from flask_login import login_user, current_user, logout_user
 users = Blueprint('users', 'users')
 
 @users.route('/', methods=['GET'])
-def test_user():
-	return 'user resource works'
+def user_index():
+	
+	users = models.User.select()
+	user_dicts = [model_to_dict(user) for user in users]
+
+	# REMOVE PASSWORD
+	for user_dict in user_dicts:
+		user_dict.pop('password')
+
+	print(user_dicts)
+
+	# RESPONSE
+	return jsonify(
+		user_dicts
+	), 200
 
 
 ### REGISTER ROUTE -- POST ###
@@ -133,7 +146,7 @@ def login():
 
 
 
-### TEMPORARY ROUTE ###
+### TEMPORARY ROUTES ###
 @users.route('/logged_in_user', methods=['GET'])
 def currently_logged():
 
@@ -162,6 +175,7 @@ def currently_logged():
 			message=f"Currently logged in as user {user_dict['username']} with the email {user_dict['email']}",
 			status=200
 		), 200
+
 
 
 ### LOGOUT ROUTE -- GET ###
