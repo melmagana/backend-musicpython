@@ -41,6 +41,19 @@ def load_user(user_id):
 		return None
 
 
+@login_manager.unauthorized_handler
+def unauthorized():
+
+	# RESPONSE
+	return jsonify(
+		data={
+			'error': 'User not logged in'
+		},
+		message="You must have an account to access this resource",
+		status=401
+	), 401
+
+
 
 ### CORS -- CROSS ORIGIN RESOURCE SHARING ###
 CORS(users, origins=['http://localhost:3000'], supports_credentials=True)
