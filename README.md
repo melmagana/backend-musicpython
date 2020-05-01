@@ -1,2 +1,2 @@
 # musicpython
-![alt text](https://i.imgur.com/MLfK8hU.jpg "Database and Routes")
+![alt text](https://i.imgur.com/pWewcPv.png "Database and Routes")
