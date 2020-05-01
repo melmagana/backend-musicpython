@@ -139,27 +139,49 @@ def delete_song(id):
 
 ### SONG UPDATE ROUTE -- PUT ###
 @songs.route('/<id>', methods=['PUT'])
+@login_required
 def update_song(id):
 
 	payload = request.get_json()
 
-	update_query = models.Song.update(
-		song_title=payload['song_title'],
-		album_title=payload['album_title'],
-		artist=payload['artist'],
-		genre=payload['genre'],
-		posted_by=payload['posted_by']
-	).where(models.Song.id == id)
+	song_to_update = models.Song.get_by_id(id)
 
-	num_of_rows_updated = update_query.execute()
+	# LOGIC TO SEE IF SONG BELONGS TO CURRENT USER
+	if song_to_update.posted_by.id == current_user.id:
 
-	updated_song = models.Song.get_by_id(id)
-	updated_song_dict = model_to_dict(updated_song)
+		# THEN UPDATE
+		if 'song_title' in payload:
+			song_to_update.song_title = payload['song_title']
+		if 'album_title' in payload:
+			song_to_update.album_title = payload['album_title']
+		if 'artist' in payload:
+			song_to_update.artist = payload['artist']
+		if 'genre' in payload:
+			song_to_update.genre = payload['genre']
 
+		song_to_update.save()
 
-	# RESPONSE
-	return jsonify(
-		data=updated_song_dict,
-		message=f"Successfully updated a song with the id of {id}",
-		status=200
-	), 200
+		updated_song_dict = model_to_dict(song_to_update)
+
+		# REMOVE PASSWORD
+		updated_song_dict['posted_by'].pop('password')
+
+		# RESPONSE
+		return jsonify(
+			data=updated_song_dict,
+			message=f"Successfully updated {updated_song_dict['song_title']}",
+			status=200
+		), 200
+
+	# LOGIC IF SONG DOES NOT BELONG TO CURRENT USER
+	else:
+
+		# RESPONSE
+		return jsonify(
+			data={
+				'error': '403 Forbidden'
+			},
+			message="Song ID does not match user ID. Users can only update their own songs",
+			status=403
+		), 403
+
