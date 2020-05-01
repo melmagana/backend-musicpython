@@ -145,8 +145,7 @@ def login():
 		), 401
 
 
-
-### TEMPORARY ROUTES ###
+### TEMPORARY ROUTE ###
 @users.route('/logged_in_user', methods=['GET'])
 def currently_logged():
 
@@ -175,6 +174,22 @@ def currently_logged():
 			message=f"Currently logged in as user {user_dict['username']} with the email {user_dict['email']}",
 			status=200
 		), 200
+
+### END OF TEMPORARY ROUTE ###
+
+
+### USER SHOW ROUTE ###
+@users.route('/<id>', methods=['GET'])
+def show_user(id):
+	user = models.User.get(models.User.id == id)
+	user_dict = model_to_dict(user)
+	user_dict.pop('password')
+	print(user_dict)
+	return jsonify(
+		data=user_dict,
+		message=f"Here is information about {user_dict['username']}",
+		status=200
+	), 200
 
 
 
